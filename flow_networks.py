@@ -1,9 +1,40 @@
 import sys
 import csv
 
-network = []
-nodes_index = {}
+
 max_flow = 0
+
+class flow_networks:
+
+    def __init__(self, file):
+        self.file = file
+        self.network = []
+        self.residual_network = []
+        self.nodes_index = {}
+        self.parse_file()
+
+    ''' Reads input file and stores as adjacency matrix with accompanying dictionary for node index '''
+    def parse_file(self):
+        with open(self.file, mode= 'r') as file:
+            csvFile = csv.reader(file)
+
+            # Create dictionary to assign vertices with an index
+            for line in csvFile:
+                print(f'{line[0]},{line[1]},{line[2]}')
+                if line[0] not in self.nodes_index:
+                    self.nodes_index[line[0]] = len(self.nodes_index)
+                if line[1] not in self.nodes_index:
+                    self.nodes_index[line[1]] = len(self.nodes_index)
+
+            # Create an empty adjacency matrix and residual netowrk matrix based on number of nodes
+            self.network = [[0 for x in range(len(self.nodes_index))] for y in range(len(self.nodes_index))]
+            self.residual_network = [[0 for x in range(len(self.nodes_index))] for y in range(len(self.nodes_index))]
+
+            file.seek(0) # Jump to beginning of file again
+
+            # Populate adjacency matrix
+            for line in csvFile:
+                self.network[self.nodes_index[line[0]]][self.nodes_index[line[1]]] = int(line[2])
 
 
 
@@ -11,27 +42,11 @@ max_flow = 0
 print(f'Input File: {sys.argv[1]}\n')
 print("Input:")
 
-# reading in input file
-with open(sys.argv[1], mode= 'r') as file:
-    csvFile = csv.reader(file)
+n = flow_networks(sys.argv[1])
 
-    # Create dictionary to assign vertices with an index
-    for line in csvFile:
-        print(f'{line[0]},{line[1]},{line[2]}')
-        if line[0] not in nodes_index:
-            nodes_index[line[0]] = len(nodes_index)
-        if line[1] not in nodes_index:
-            nodes_index[line[1]] = len(nodes_index)
+print(n.ford_fulkerson())
 
-    # Create an empty adjacency matrix based on number of nodes
-    network = [[0 for x in range(len(nodes_index))] for y in range(len(nodes_index))]
-
-    file.seek(0) # Jump to beginning of file again
-
-    # Populate adjacency matrix
-    for line in csvFile:
-        network[nodes_index[line[0]]][nodes_index[line[1]]] = int(line[2])
-
+# print(len(n.network))
 
 # TODO: Edmonds-Karp here
 
