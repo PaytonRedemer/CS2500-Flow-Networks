@@ -32,6 +32,28 @@ class flow_networks:
             for line in csvFile:
                 self.network.append(edge(line[0],line[1], int(line[2])))
 
+    def find_path(self, start, end, path = []):
+        if start == end:
+            return path
+        for edge in self.network:
+            if edge.start == start:
+                residual_capacity = edge.capacity - edge.flow
+                if residual_capacity > 0 and not (edge, residual_capacity) in path:
+                    result = self.find_path(edge.end, end, path + [(edge, residual_capacity)])
+                    if result != None:
+                        return result
+
+    def ford_fulkerson(self):
+        path = self.find_path('s', 't')
+        while path != None:
+            flow = min(edge[1] for edge in path)
+            for edge, res in path:
+                edge.flow += flow
+                edge.returnEdge.flow -= flow
+            result = self.find_path('s','t')
+        return sum(edge.flow for edge in self.network)
+
+
 
 
 # printing out input file
@@ -40,6 +62,8 @@ print("Input:")
 
 n = flow_networks(sys.argv[1])
 max_flow = 0
+
+print(n.find_path('s','t'))
 
 # print(n.ford_fulkerson())
 
