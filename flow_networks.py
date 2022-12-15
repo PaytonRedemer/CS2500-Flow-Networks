@@ -1,16 +1,26 @@
 import sys
 import csv
 
+class edge:
+    def __init__(self, start, end, capacity, flow = 0):
+        self.start = start
+        self.end = end
+        self.capacity = capacity
+        self.flow = flow
 
-max_flow = 0
+    def __repr__(self):
+        return f"<edge start:{self.start} end:{self.end} capacity:{self.capacity} flow:{self.flow}>"
+
+    def __str__(self):
+        return f"{self.start},{self.end}\tflow:\t{self.flow}/{self.capacity}"
+
+
 
 class flow_networks:
 
     def __init__(self, file):
         self.file = file
         self.network = []
-        self.residual_network = []
-        self.nodes_index = {}
         self.parse_file()
 
     ''' Reads input file and stores as adjacency matrix with accompanying dictionary for node index '''
@@ -18,23 +28,9 @@ class flow_networks:
         with open(self.file, mode= 'r') as file:
             csvFile = csv.reader(file)
 
-            # Create dictionary to assign vertices with an index
+            # Populate adjacency list
             for line in csvFile:
-                print(f'{line[0]},{line[1]},{line[2]}')
-                if line[0] not in self.nodes_index:
-                    self.nodes_index[line[0]] = len(self.nodes_index)
-                if line[1] not in self.nodes_index:
-                    self.nodes_index[line[1]] = len(self.nodes_index)
-
-            # Create an empty adjacency matrix and residual netowrk matrix based on number of nodes
-            self.network = [[0 for x in range(len(self.nodes_index))] for y in range(len(self.nodes_index))]
-            self.residual_network = [[0 for x in range(len(self.nodes_index))] for y in range(len(self.nodes_index))]
-
-            file.seek(0) # Jump to beginning of file again
-
-            # Populate adjacency matrix
-            for line in csvFile:
-                self.network[self.nodes_index[line[0]]][self.nodes_index[line[1]]] = int(line[2])
+                self.network.append(edge(line[0],line[1], int(line[2])))
 
 
 
@@ -43,15 +39,14 @@ print(f'Input File: {sys.argv[1]}\n')
 print("Input:")
 
 n = flow_networks(sys.argv[1])
+max_flow = 0
 
-print(n.ford_fulkerson())
+# print(n.ford_fulkerson())
 
-# print(len(n.network))
-
-# TODO: Edmonds-Karp here
+# TODO: Ford-Fulkerson here
 
 # printing out network flow
-# print("\nNetwork Flow:\n")
-# for edge in network:
-#     print(f'{edge[0]},{edge[1]}\tflow: {edge[3]}/{edge[2]}')
-# print("\nMax flow in this network is",max_flow)
+print("\nNetwork Flow:")
+for edge in n.network:
+    print(edge)
+print("\nMax flow in this network is",max_flow)
