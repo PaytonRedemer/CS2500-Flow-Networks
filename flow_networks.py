@@ -1,58 +1,78 @@
 import sys
 import csv
 
-class edge:
-    def __init__(self, start, end, capacity, flow = 0):
+class Edge:
+    def __init__(self, start, end, capacity):
         self.start = start
         self.end = end
         self.capacity = capacity
-        self.flow = flow
+        self.residual_edge = None
 
     def __repr__(self):
-        return f"<edge start:{self.start} end:{self.end} capacity:{self.capacity} flow:{self.flow}>"
+        return f"<Edge start:{self.start} end:{self.end} capacity:{self.capacity}>"
 
     def __str__(self):
-        return f"{self.start},{self.end}\tflow:\t{self.flow}/{self.capacity}"
+        return f"{self.start},{self.end}"
 
 
 
 class flow_networks:
 
-    def __init__(self, file):
-        self.file = file
-        self.network = []
-        self.parse_file()
+    def __init__(self):
+        self.adj = {}
+        self.flow = {}
+
+    def add_vertex(self, vertex):
+        self.adj[vertex] = []
+
+    def add_edge(self, start, end, capacity):
+        edge = Edge(start,end,capacity)
+        residual_edge = Edge(start,end,0)
+
+        edge.residual_edge = residual_edge
+        residual_edge.residual_edge = edge
+
+        self.adj[start].append(edge)
+        self.adj[end].append(residual_edge)
+
+        self.flow[edge] = 0
+        self.flow[residual_edge] = 0
+
 
     ''' Reads input file and stores as adjacency matrix with accompanying dictionary for node index '''
-    def parse_file(self):
-        with open(self.file, mode= 'r') as file:
+    def parse_file(self,file):
+        with open(file, mode= 'r') as file:
             csvFile = csv.reader(file)
 
             # Populate adjacency list
             for line in csvFile:
-                self.network.append(edge(line[0],line[1], int(line[2])))
+                self.add_edge(line[0],line[1],int(line[2]))
 
-    def find_path(self, start, end, path = []):
-        if start == end:
-            return path
-        for edge in self.network:
-            if edge.start == start:
-                residual_capacity = edge.capacity - edge.flow
-                if residual_capacity > 0 and not (edge, residual_capacity) in path:
-                    result = self.find_path(edge.end, end, path + [(edge, residual_capacity)])
-                    if result != None:
-                        return result
+    def find_path(self, source, sink, path):
+        queue = [(source, path)]
+        while queue:
+            (source, path) = queue.pop(0)
+            for edge in self.adj[source]:
+                residual = edge.capacity - self.flow[edge]
+                if residual > 0 and edge not in path and edge.residual_edge not in path:
+                    if edge.end == sink:
+                        return path + [edge]
+                    else:
+                        queue.append((edge.end, path + [edge]))
 
-    def ford_fulkerson(self):
-        path = self.find_path('s', 't')
+
+    def max_flow(self, source, sink):
+        path = self.find_path(source, sink, [])
         while path != None:
-            flow = min(edge[1] for edge in path)
-            for edge, res in path:
-                edge.flow += flow
-                edge.returnEdge.flow -= flow
-            result = self.find_path('s','t')
-        return sum(edge.flow for edge in self.network)
-
+            # print('path', path)
+            residuals = [edge.capacity - self.flow[edge] for edge in path]
+            flow = min(residuals)
+            for edge in path:
+                self.flow[edge] += flow
+                self.flow[edge.residual_edge] -= flow
+            path = self.find_path(source, sink, [])
+            # print 'flow', self.flow
+        return sum(self.flow[edge] for edge in self.adj[source])
 
 
 
@@ -60,17 +80,30 @@ class flow_networks:
 print(f'Input File: {sys.argv[1]}\n')
 print("Input:")
 
-n = flow_networks(sys.argv[1])
-max_flow = 0
+n = flow_networks()
 
-print(n.find_path('s','t'))
+[n.add_vertex(v) for v in 'st']
+# n.add_vertex('v1')
+# n.add_vertex('v2')
+# n.add_vertex('v3')
+# n.add_vertex('v4')
+n.add_vertex('a')
+n.add_vertex('b')
+n.add_vertex('c')
+n.add_vertex('d')
+n.add_vertex('e')
+n.add_vertex('f')
 
-# print(n.ford_fulkerson())
+# reading input file
+n.parse_file(sys.argv[1])
 
-# TODO: Ford-Fulkerson here
+
+max_flow = (n.max_flow('s','t'))
+
 
 # printing out network flow
 print("\nNetwork Flow:")
-for edge in n.network:
-    print(edge)
+for i in n.flow.items():
+    if i[0].capacity != 0:
+        print(f"{i[0]}\t flow:  {i[1]}/{i[0].capacity}")
 print("\nMax flow in this network is",max_flow)
