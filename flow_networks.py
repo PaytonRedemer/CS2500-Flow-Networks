@@ -22,9 +22,6 @@ class flow_networks:
         self.adj = {}
         self.flow = {}
 
-    def add_vertex(self, vertex):
-        self.adj[vertex] = []
-
     def add_edge(self, start, end, capacity):
         edge = Edge(start,end,capacity)
         residual_edge = Edge(start,end,0)
@@ -46,6 +43,10 @@ class flow_networks:
 
             # Populate adjacency list
             for line in csvFile:
+                if line[0] not in self.adj:
+                    self.adj[line[0]] = []
+                if line[1] not in self.adj:
+                    self.adj[line[1]] = []
                 self.add_edge(line[0],line[1],int(line[2]))
 
     def find_path(self, source, sink, path):
@@ -75,35 +76,23 @@ class flow_networks:
         return sum(self.flow[edge] for edge in self.adj[source])
 
 
+for file in sys.argv[1:]:
+    # printing out input file
+    print(f'Input File: {file}\n')
+    print("Input:")
+    with open(file, 'r') as f:
+        print(f.read())
 
-# printing out input file
-print(f'Input File: {sys.argv[1]}\n')
-print("Input:")
+    # reading input file
+    n = flow_networks()
+    n.parse_file(file)
 
-n = flow_networks()
+    # run Ford-Fulkerson algorithm on network
+    max_flow = (n.max_flow('s','t'))
 
-[n.add_vertex(v) for v in 'st']
-# n.add_vertex('v1')
-# n.add_vertex('v2')
-# n.add_vertex('v3')
-# n.add_vertex('v4')
-n.add_vertex('a')
-n.add_vertex('b')
-n.add_vertex('c')
-n.add_vertex('d')
-n.add_vertex('e')
-n.add_vertex('f')
-
-# reading input file
-n.parse_file(sys.argv[1])
-
-
-max_flow = (n.max_flow('s','t'))
-
-
-# printing out network flow
-print("\nNetwork Flow:")
-for i in n.flow.items():
-    if i[0].capacity != 0:
-        print(f"{i[0]}\t flow:  {i[1]}/{i[0].capacity}")
-print("\nMax flow in this network is",max_flow)
+    # printing out network flow
+    print("\nNetwork Flow:")
+    for i in n.flow.items():
+        if i[0].capacity != 0:
+            print(f"{i[0]}\t flow:  {i[1]}/{i[0].capacity}")
+    print("\nMax flow in this network is",max_flow)
