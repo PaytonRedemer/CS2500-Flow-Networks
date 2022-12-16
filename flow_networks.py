@@ -7,6 +7,7 @@ class flow_networks:
         self.file = file
         self.network = []
         self.nodes_index = {}
+        self.old_network = None
         self.parse_file()
         self.vertices = len(self.network)
 
@@ -15,7 +16,9 @@ class flow_networks:
     def parse_file(self):
         with open(self.file, mode="r") as file:
             csvFile = csv.reader(file)
+            self.old_network = [[line[0],line[1],int(line[2])] for line in csvFile]
 
+            file.seek(0)  # Jump to beginning of file again
             # Create dictionary to assign vertices with an index
             for line in csvFile:
                 print(f"{line[0]},{line[1]},{line[2]}")
@@ -37,6 +40,11 @@ class flow_networks:
                 self.network[self.nodes_index[line[0]]][
                     self.nodes_index[line[1]]
                 ] = int(line[2])
+
+    def print_network(self):
+        for edge in self.old_network:
+            print(f"{edge[0]},{edge[1]}\tflow:  {self.network[self.nodes_index[edge[0]]][self.nodes_index[edge[1]]]}/{edge[2]}")
+            # print(self.nodes_index[edge[0]],self.nodes_index[edge[1]])
 
 
     def BFS(self, s, t, parent):
@@ -88,10 +96,11 @@ class flow_networks:
 for i in sys.argv[1:]:
 
     # printing out input file
-    print(f"Input File: {i}\n")
+    print(f"Input File:  {i}\n")
     print("Input:")
 
     n = flow_networks(i)
+    print(n.network)
 
     source = n.nodes_index["s"]
     sink = n.nodes_index["t"]
@@ -99,7 +108,7 @@ for i in sys.argv[1:]:
     max_flow = n.FordFulkerson(source, sink)
 
     # printing out network flow
-    # print("\nNetwork Flow:\n")
-    # for edge in n.network:
-    #     print(f'{edge[0]},{edge[1]}\tflow: {edge[3]}/{edge[2]}')
+    print("\nNetwork Flow:\n")
+    n.print_network()
     print("\nMax flow in this network is", max_flow)
+    # print(n.nodes_index)
