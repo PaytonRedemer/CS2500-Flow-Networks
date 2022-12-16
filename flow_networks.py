@@ -1,5 +1,6 @@
 import sys
 import csv
+import glob
 
 class Edge:
     def __init__(self, start, end, capacity):
@@ -77,12 +78,6 @@ class flow_networks:
 
 
 for file in sys.argv[1:]:
-    # printing out input file
-    print(f'Input File: {file}\n')
-    print("Input:")
-    with open(file, 'r') as f:
-        print(f.read())
-
     # reading input file
     n = flow_networks()
     n.parse_file(file)
@@ -90,9 +85,16 @@ for file in sys.argv[1:]:
     # run Ford-Fulkerson algorithm on network
     max_flow = (n.max_flow('s','t'))
 
-    # printing out network flow
-    print("\nNetwork Flow:")
-    for i in n.flow.items():
-        if i[0].capacity != 0:
-            print(f"{i[0]}\t flow:  {i[1]}/{i[0].capacity}")
-    print("\nMax flow in this network is",max_flow)
+    with open(file+".out", 'w') as f:
+        # printing out input file
+        print(f'Input File: {file}\n', file=f)
+        print("Input:", file=f)
+        with open(file, 'r') as input:
+            print(input.read(), file=f)
+
+        # printing out network flow
+        print("\nNetwork Flow:", file=f)
+        for i in n.flow.items():
+            if i[0].capacity != 0:
+                print(f"{i[0]}\t flow:  {i[1]}/{i[0].capacity}", file=f)
+        print(f"\nMax flow in this network is {max_flow}", file=f)
