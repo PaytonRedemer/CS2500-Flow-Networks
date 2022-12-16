@@ -77,7 +77,12 @@ class flow_networks:
         return sum(self.flow[edge] for edge in self.adj[source])
 
 
-for file in sys.argv[1:]:
+if len(sys.argv) == 1:
+    files = glob.glob('network*.txt')
+else:
+    files = sys.argv[1:]
+
+for file in files:
     # reading input file
     n = flow_networks()
     n.parse_file(file)
@@ -85,7 +90,8 @@ for file in sys.argv[1:]:
     # run Ford-Fulkerson algorithm on network
     max_flow = (n.max_flow('s','t'))
 
-    with open(file+".out", 'w') as f:
+    # Output to file
+    with open(file[:-4]+"_output.txt", 'w') as f:
         # printing out input file
         print(f'Input File: {file}\n', file=f)
         print("Input:", file=f)
