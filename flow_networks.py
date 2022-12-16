@@ -77,20 +77,23 @@ class flow_networks:
 
         return max_flow
 
-# printing out input file
-print(f'Input File: {sys.argv[1]}\n')
-print("Input:")
+# Loop through all command line args
+for i in sys.argv[1:]:
 
-n = flow_networks(sys.argv[1])
+    # printing out input file
+    print(f'Input File: {i}\n')
+    print("Input:")
 
-source = n.nodes_index['s']
-sink = n.nodes_index['t']
+    n = flow_networks(i)
 
-max_flow = n.FordFulkerson(source,sink)
+    source = n.nodes_index['s']
+    sink = n.nodes_index['t']
+
+    max_flow = n.FordFulkerson(source,sink)
 
 
-# printing out network flow
-# print("\nNetwork Flow:\n")
-# for edge in n.network:
-#     print(f'{edge[0]},{edge[1]}\tflow: {edge[3]}/{edge[2]}')
-print("\nMax flow in this network is",max_flow)
+    # printing out network flow
+    # print("\nNetwork Flow:\n")
+    # for edge in n.network:
+    #     print(f'{edge[0]},{edge[1]}\tflow: {edge[3]}/{edge[2]}')
+    print("\nMax flow in this network is",max_flow)
