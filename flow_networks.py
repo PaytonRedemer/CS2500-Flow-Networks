@@ -27,7 +27,7 @@ class flow_networks:
         self.flow = {}
 
 
-    def add_edge(self, start, end, capacity : int):
+    def add_edge(self, start, end, capacity):
         """
         Add edge to flow network
 
