@@ -3,15 +3,18 @@ import csv
 import glob
 
 class Edge:
+    # Contructor
     def __init__(self, start, end, capacity):
         self.start = start
         self.end = end
         self.capacity = capacity
         self.residual_edge = None
 
+    # Print edge
     def __repr__(self):
         return f"<Edge start:{self.start} end:{self.end} capacity:{self.capacity}>"
 
+    # Print readable edge
     def __str__(self):
         return f"{self.start},{self.end}"
 
@@ -80,14 +83,30 @@ class flow_networks:
 
                 self.add_edge(line[0],line[1],int(line[2]))
 
-    def find_path(self, source, sink, path):
-        queue = [(source, path)]
+    def find_path(self, start, end, path):
+        """
+        Find augmenting path in flow network using breadth first search
+
+        Precondition: start != end and capacity > 0
+
+        Parameters
+        ----------
+        start : str
+            Start vertex of edge
+        end : str
+            End vertex of edge
+        path : list[Edge]
+            List vectices of a path in order
+
+        Postcondition: If a path exists, path is filled with a valid path
+        """
+        queue = [(start, path)]
         while queue:
-            (source, path) = queue.pop(0)
-            for edge in self.adjacency[source]:
+            (start, path) = queue.pop(0)
+            for edge in self.adjacency[start]:
                 residual = edge.capacity - self.flow[edge]
                 if residual > 0 and edge not in path and edge.residual_edge not in path:
-                    if edge.end == sink:
+                    if edge.end == end:
                         return path + [edge]
                     else:
                         queue.append((edge.end, path + [edge]))
