@@ -4,6 +4,7 @@
 Author: Payton Redemer
 File: flow_networks.py
 Purpose: Find max flow of flow network input file
+Note: Basic Inspiration on storing graph was from https://brilliant.org/wiki/ford-fulkerson-algorithm/
 """
 
 import sys
