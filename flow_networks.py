@@ -125,12 +125,14 @@ class flow_networks:
             # print 'flow', self.flow
         return sum(self.flow[edge] for edge in self.adjacency[source])
 
-
+# If no command arguments are specified
 if len(sys.argv) == 1:
     files = glob.glob('network*.txt')
+# Add all command arguments to file
 else:
     files = sys.argv[1:]
 
+# Run Ford-Fulkerson on each file
 for file in files:
     # reading input file
     n = flow_networks()
