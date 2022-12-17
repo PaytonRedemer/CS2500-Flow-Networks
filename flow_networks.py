@@ -10,6 +10,8 @@ import sys
 import csv
 import glob
 
+DEBUG = False
+
 class Edge:
     # Contructor
     def __init__(self, start, end, capacity):
@@ -120,6 +122,19 @@ class flow_networks:
                     else:
                         queue.append((edge.end, path + [edge]))
 
+    def cut_flow(self, source, sink):
+        """
+        Loop invariant for Ford-Fulkerson
+
+        Parameters
+        ----------
+        source : str
+            Source vertex of network
+        sink : str
+            Sink vertex of network
+
+        Returns truth value if all cuts that make s and t disjoint have the same net flow
+        """
 
     def ford_fulkerson(self, source, sink):
         """
@@ -136,14 +151,20 @@ class flow_networks:
 
         Postcondition: Returns max flow of network and modifies flow list to reflect max flow
         """
+        if DEBUG:
+            assert self.cut_flow(source, sink)
         path = self.find_path(source, sink, [])
         while path != None:
+            if DEBUG:
+                assert self.cut_flow(source, sink)
             residuals = [edge.capacity - self.flow[edge] for edge in path]
             flow = min(residuals)
             for edge in path:
                 self.flow[edge] += flow
                 self.flow[edge.residual_edge] -= flow
             path = self.find_path(source, sink, [])
+        if DEBUG:
+            assert self.cut_flow(source, sink)
         return sum(self.flow[edge] for edge in self.adjacency[source])
 
 # If no command arguments are specified
