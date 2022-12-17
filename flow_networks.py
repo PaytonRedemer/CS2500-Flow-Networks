@@ -16,22 +16,39 @@ class Edge:
         return f"{self.start},{self.end}"
 
 
-
 class flow_networks:
 
+    # Constructor
     def __init__(self):
-        self.adj = {}
+        self.adjacency = {}
         self.flow = {}
 
-    def add_edge(self, start, end, capacity):
+
+    def add_edge(self, start, end, capacity : int):
+        """
+        Add edge to flow network
+
+        Precondition: start != end and capacity > 0
+
+        Parameters
+        ----------
+        start : str
+            Start vertex of edge
+        end : str
+            End vertex of edge
+        capacity : int
+            Max capacity of edge
+
+        Postcondition: Edge is added to adjacency list and flow list
+        """
         edge = Edge(start,end,capacity)
         residual_edge = Edge(start,end,0)
 
         edge.residual_edge = residual_edge
         residual_edge.residual_edge = edge
 
-        self.adj[start].append(edge)
-        self.adj[end].append(residual_edge)
+        self.adjacency[start].append(edge)
+        self.adjacency[end].append(residual_edge)
 
         self.flow[edge] = 0
         self.flow[residual_edge] = 0
@@ -44,17 +61,17 @@ class flow_networks:
 
             # Populate adjacency list
             for line in csvFile:
-                if line[0] not in self.adj:
-                    self.adj[line[0]] = []
-                if line[1] not in self.adj:
-                    self.adj[line[1]] = []
+                if line[0] not in self.adjacency:
+                    self.adjacency[line[0]] = []
+                if line[1] not in self.adjacency:
+                    self.adjacency[line[1]] = []
                 self.add_edge(line[0],line[1],int(line[2]))
 
     def find_path(self, source, sink, path):
         queue = [(source, path)]
         while queue:
             (source, path) = queue.pop(0)
-            for edge in self.adj[source]:
+            for edge in self.adjacency[source]:
                 residual = edge.capacity - self.flow[edge]
                 if residual > 0 and edge not in path and edge.residual_edge not in path:
                     if edge.end == sink:
@@ -66,7 +83,7 @@ class flow_networks:
     def max_flow(self, source, sink):
         path = self.find_path(source, sink, [])
         while path != None:
-            # print('path', path)
+            print('path', path)
             residuals = [edge.capacity - self.flow[edge] for edge in path]
             flow = min(residuals)
             for edge in path:
@@ -74,7 +91,7 @@ class flow_networks:
                 self.flow[edge.residual_edge] -= flow
             path = self.find_path(source, sink, [])
             # print 'flow', self.flow
-        return sum(self.flow[edge] for edge in self.adj[source])
+        return sum(self.flow[edge] for edge in self.adjacency[source])
 
 
 if len(sys.argv) == 1:
