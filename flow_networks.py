@@ -26,7 +26,6 @@ class flow_networks:
         self.adjacency = {}
         self.flow = {}
 
-
     def add_edge(self, start, end, capacity):
         """
         Add edge to flow network
@@ -112,17 +111,29 @@ class flow_networks:
                         queue.append((edge.end, path + [edge]))
 
 
-    def max_flow(self, source, sink):
+    def ford_fulkerson(self, source, sink):
+        """
+        Run Ford-Fulkerson on flow network
+
+        Precondition:
+
+        Parameters
+        ----------
+        source : str
+            Source vertex of network
+        sink : str
+            Sink vertex of network
+
+        Postcondition: Returns max flow of network and modifies flow list to reflect max flow
+        """
         path = self.find_path(source, sink, [])
         while path != None:
-            print('path', path)
             residuals = [edge.capacity - self.flow[edge] for edge in path]
             flow = min(residuals)
             for edge in path:
                 self.flow[edge] += flow
                 self.flow[edge.residual_edge] -= flow
             path = self.find_path(source, sink, [])
-            # print 'flow', self.flow
         return sum(self.flow[edge] for edge in self.adjacency[source])
 
 # If no command arguments are specified
@@ -139,7 +150,7 @@ for file in files:
     n.parse_file(file)
 
     # run Ford-Fulkerson algorithm on network
-    max_flow = (n.max_flow('s','t'))
+    max_flow = (n.ford_fulkerson('s','t'))
 
     # Output to file
     with open(file[:-4]+"_output.txt", 'w') as f:
