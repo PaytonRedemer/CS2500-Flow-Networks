@@ -14,7 +14,7 @@ import glob
 DEBUG = False
 
 class Edge:
-    # Contructor
+    # Constructor
     def __init__(self, start, end, capacity):
         self.start = start
         self.end = end
@@ -80,14 +80,14 @@ class flow_networks:
         file : str
             File path to input file
 
-        Postcondition: flow_netorks is populated based on the input file
+        Postcondition: flow_networks is populated based on the input file
         """
         with open(file, mode= 'r') as file:
             csvFile = csv.reader(file)
 
             # Populate adjacency list
             for line in csvFile:
-                # Add unknown vertex to self.adjacenty
+                # Add unknown vertex to self.adjacency
                 if line[0] not in self.adjacency:
                     self.adjacency[line[0]] = []
                 if line[1] not in self.adjacency:
@@ -99,7 +99,7 @@ class flow_networks:
         """
         Find augmenting path in flow network using breadth first search
 
-        Precondition: start != end and capacity > 0
+        Precondition: start != end
 
         Parameters
         ----------
@@ -108,7 +108,7 @@ class flow_networks:
         end : str
             End vertex of edge
         path : list[Edge]
-            List vectices of a path in order
+            List vertices of a path in order
 
         Postcondition: If a path exists, path is filled with a valid path
         """
