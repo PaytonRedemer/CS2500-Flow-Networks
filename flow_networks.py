@@ -54,17 +54,30 @@ class flow_networks:
         self.flow[residual_edge] = 0
 
 
-    ''' Reads input file and stores as adjacency matrix with accompanying dictionary for node index '''
     def parse_file(self,file):
+        """
+        Reads input file and stores as adjacency list and a list with flow for each edge
+
+        Precondition: file be a valid file path and the file must be in the format as specified in the README
+
+        Parameters
+        ----------
+        file : str
+            File path to input file
+
+        Postcondition: flow_netorks is populated based on the input file
+        """
         with open(file, mode= 'r') as file:
             csvFile = csv.reader(file)
 
             # Populate adjacency list
             for line in csvFile:
+                # Add unknown vertex to self.adjacenty
                 if line[0] not in self.adjacency:
                     self.adjacency[line[0]] = []
                 if line[1] not in self.adjacency:
                     self.adjacency[line[1]] = []
+
                 self.add_edge(line[0],line[1],int(line[2]))
 
     def find_path(self, source, sink, path):
