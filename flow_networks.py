@@ -50,6 +50,9 @@ class flow_networks:
 
         Postcondition: Edge is added to adjacency list and flow list
         """
+        if start == end:
+            raise ValueError("Edges that are loops cannot be added")
+
         edge = Edge(start,end,capacity)
         residual_edge = Edge(start,end,0)
 
