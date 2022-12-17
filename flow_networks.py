@@ -189,7 +189,7 @@ for file in files:
     max_flow = (n.ford_fulkerson('s','t'))
 
     # Output to file
-    with open(file[:-4]+"_output.txt", 'w') as f:
+    with open("output_"+file[:-4]+".txt", 'w') as f:
         # printing out input file
         print(f'Input File: {file}\n', file=f)
         print("Input:", file=f)
