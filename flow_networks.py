@@ -1,3 +1,11 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+"""
+Author: Payton Redemer
+File: flow_networks.py
+Purpose: Find max flow of flow network input file
+"""
+
 import sys
 import csv
 import glob
@@ -20,7 +28,6 @@ class Edge:
 
 
 class flow_networks:
-
     # Constructor
     def __init__(self):
         self.adjacency = {}
