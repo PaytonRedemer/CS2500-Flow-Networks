@@ -125,7 +125,7 @@ class flow_networks:
         """
         Run Ford-Fulkerson on flow network
 
-        Precondition:
+        Precondition: adjacency and flow lists are configured using parse_file() and there must be a distinct source and sink
 
         Parameters
         ----------
