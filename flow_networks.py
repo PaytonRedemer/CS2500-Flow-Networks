@@ -122,7 +122,7 @@ class flow_networks:
                     else:
                         queue.append((edge.end, path + [edge]))
 
-    def cut_flow(self, source, sink):
+    def cut_flow(self):
         """
         Loop invariant for Ford-Fulkerson
 
@@ -135,6 +135,10 @@ class flow_networks:
 
         Returns truth value if all cuts that make s and t disjoint have the same net flow
         """
+        net_flow = 0
+        for i in self.flow:
+            net_flow += self.flow[i]
+        return net_flow == 0
 
     def ford_fulkerson(self, source, sink):
         """
@@ -152,11 +156,11 @@ class flow_networks:
         Postcondition: Returns max flow of network and modifies flow list to reflect max flow
         """
         if DEBUG:
-            assert self.cut_flow(source, sink)
+            assert self.cut_flow()
         path = self.find_path(source, sink, [])
         while path != None:
             if DEBUG:
-                assert self.cut_flow(source, sink)
+                assert self.cut_flow()
             residuals = [edge.capacity - self.flow[edge] for edge in path]
             flow = min(residuals)
             for edge in path:
@@ -164,7 +168,7 @@ class flow_networks:
                 self.flow[edge.residual_edge] -= flow
             path = self.find_path(source, sink, [])
         if DEBUG:
-            assert self.cut_flow(source, sink)
+            assert self.cut_flow()
         return sum(self.flow[edge] for edge in self.adjacency[source])
 
 # If no command arguments are specified
